@@ -38,6 +38,6 @@ jobs:
         env:
           SKIP_POST_HOOK: "1"
         run: |
-          copier copy . /tmp/test-project --defaults --skip-answered
+          copier copy . /tmp/test-project --defaults
           test -f /tmp/test-project/pyproject.toml
           test -d /tmp/test-project/src

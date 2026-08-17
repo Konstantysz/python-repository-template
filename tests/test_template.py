@@ -11,7 +11,6 @@ def test_copier_copy_defaults(tmp_path):
             Path(__file__).parent.parent,
             str(tmp_path / "output"),
             "--defaults",
-            "--skip-answered",
         ],
         env={**os.environ, "SKIP_POST_HOOK": "1"},
         capture_output=True,
