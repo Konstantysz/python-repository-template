@@ -159,16 +159,6 @@ commit_convention:
   default: sentence-case
   help: Commit message convention to use
 
-current_year:
-  type: str
-  default: "{% now 'utc', '%Y' %}"
-  when: false
-
-current_date:
-  type: str
-  default: "{% now 'utc', '%Y-%m-%d' %}"
-  when: false
-
 _exclude:
   - "{% if package_manager != 'python-env' %}requirements.txt{% endif %}"
   - "{% if package_manager != 'python-env' %}requirements-dev.txt{% endif %}"
