@@ -1,0 +1,14 @@
+pydantic-settings>=2.0
+{% if use_cli %}typer>=0.12
+rich>=13.0
+{% endif %}
+{% if use_web and web_framework == 'FastAPI' %}fastapi>=0.115
+uvicorn[standard]>=0.30
+{% elif use_web and web_framework == 'Flask' %}flask>=3.0
+{% elif use_web and web_framework == 'Django' %}django>=5.0
+{% endif %}
+{% if use_database and database == 'SQLAlchemy (async)' %}sqlalchemy[asyncio]>=2.0
+asyncpg>=0.29
+{% elif use_database and database == 'SQLModel' %}sqlmodel>=0.0.14
+{% elif use_database and database == 'Tortoise ORM' %}tortoise-orm>=0.20
+{% endif %}

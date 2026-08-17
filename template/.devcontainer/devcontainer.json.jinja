@@ -1,0 +1,42 @@
+{% if use_docker %}
+{
+  "name": "{{ repo_name }}",
+  "dockerFile": "../Dockerfile",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/workspaces/{{ repo_name }}/.venv/bin/python",
+        "editor.formatOnSave": true,
+        "python.linting.enabled": true
+      }
+    }
+  },
+  "postCreateCommand": "{% if package_manager == 'uv' %}uv sync && pre-commit install{% elif package_manager == 'python-env' %}pip install -r requirements-dev.txt && pre-commit install{% elif package_manager == 'pixi' %}pixi install && pre-commit install{% endif %}",
+  "remoteUser": "vscode"
+}
+{% else %}
+{
+  "name": "{{ repo_name }}",
+  "image": "mcr.microsoft.com/devcontainers/python:{{ python_version }}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "postCreateCommand": "{% if package_manager == 'uv' %}uv sync{% elif package_manager == 'python-env' %}pip install -r requirements-dev.txt{% elif package_manager == 'pixi' %}pixi install{% endif %} && pre-commit install",
+  "remoteUser": "vscode"
+}
+{% endif %}

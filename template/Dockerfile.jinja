@@ -1,0 +1,68 @@
+FROM python:{{ python_version }}-slim AS builder
+
+WORKDIR /app
+
+# Install system dependencies needed for building
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+{% if package_manager == 'uv' %}
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+COPY pyproject.toml ./
+RUN uv lock
+COPY uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+
+{% elif package_manager == 'python-env' %}
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+{% elif package_manager == 'pixi' %}
+# Install pixi
+RUN curl -fsSL https://pixi.sh/install.sh | bash
+ENV PATH="/root/.pixi/bin:${PATH}"
+COPY pixi.toml ./
+RUN pixi install
+{% endif %}
+
+# Copy source
+COPY src ./src
+COPY pyproject.toml README.md ./
+
+{% if package_manager == 'uv' %}
+RUN uv sync --frozen --no-dev
+{% elif package_manager == 'python-env' %}
+RUN pip install --no-cache-dir .
+{% elif package_manager == 'pixi' %}
+RUN pixi install
+{% endif %}
+
+FROM python:{{ python_version }}-slim AS runtime
+
+WORKDIR /app
+
+# Create non-root user
+RUN useradd --create-home appuser
+
+{% if package_manager == 'uv' %}
+COPY --from=builder /app/.venv ./.venv
+ENV PATH="/app/.venv/bin:$PATH"
+{% elif package_manager == 'python-env' %}
+COPY --from=builder /usr/local/lib/python{{ python_version }}/site-packages /usr/local/lib/python{{ python_version }}/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+{% elif package_manager == 'pixi' %}
+COPY --from=builder /root/.pixi /root/.pixi
+ENV PATH="/root/.pixi/bin:$PATH"
+{% endif %}
+
+COPY src ./src
+
+USER appuser
+
+{% if use_cli %}
+ENTRYPOINT ["python", "-m", "{{ package_name }}"]
+{% else %}
+CMD ["python", "-c", "import {{ package_name }}"]
+{% endif %}

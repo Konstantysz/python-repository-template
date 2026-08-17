@@ -1,0 +1,39 @@
+# AI agent instructions
+
+## Commands
+
+{% if package_manager == 'uv' %}
+- Install: `uv sync --locked`
+- Tests: `uv run pytest -q`
+- Format: `uv run ruff format . && uv run ruff check --fix .`
+- Type check: `uv run mypy src`
+- Lint: `uv run pre-commit run --all-files`
+{% elif package_manager == 'python-env' %}
+- Install: `python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt`
+- Tests: `.venv/bin/pytest -q`
+- Format: `.venv/bin/ruff format . && .venv/bin/ruff check --fix .`
+- Type check: `.venv/bin/mypy src`
+- Lint: `.venv/bin/pre-commit run --all-files`
+{% elif package_manager == 'pixi' %}
+- Install: `pixi install`
+- Tests: `pixi run test`
+- Format: `pixi run format`
+- Type check: `pixi run typecheck`
+- Lint: `pixi run lint`
+{% endif %}
+
+## Rules
+
+- Read this file before making any changes.
+- Every public function must have type hints and a docstring (Google style).
+- Do not modify configuration files without a clear reason.
+- Keep the `src/` layout; do not create new top-level directories.
+- Store secrets in `.env`. Never commit `.env`.
+- If using a database, remember about migrations.
+- Write tests for every new function.
+
+## Code style
+
+- Format with `ruff`.
+- Use `Optional` instead of `| None` unless newer code requires it.
+- Avoid global imports that slow down startup.

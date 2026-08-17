@@ -1,0 +1,31 @@
+# Getting started
+
+## Prerequisites
+
+- Python {{ python_version }} or later
+
+## Installation
+
+{% if package_manager == 'uv' %}
+Run `uv sync --locked` to create a virtual environment and install dependencies.
+{% elif package_manager == 'python-env' %}
+Create a virtual environment and install the development requirements:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+```
+{% elif package_manager == 'pixi' %}
+Run `pixi install` to set up the environment.
+{% endif %}
+
+## Running the application
+
+{% if use_cli %}
+```bash
+python -m {{ package_name }}
+```
+{% else %}
+The project does not include a CLI. Use it as a library.
+{% endif %}

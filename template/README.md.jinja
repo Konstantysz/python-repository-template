@@ -1,0 +1,47 @@
+# {{ repo_name }}
+
+{{ project_description }}
+
+## Installation
+
+{% if package_manager == 'uv' %}
+```bash
+uv sync --locked
+```
+{% elif package_manager == 'python-env' %}
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+```
+{% elif package_manager == 'pixi' %}
+```bash
+pixi install
+```
+{% endif %}
+
+## Running tests
+
+{% if package_manager == 'uv' %}
+```bash
+uv run pytest
+```
+{% elif package_manager == 'python-env' %}
+```bash
+pytest
+```
+{% elif package_manager == 'pixi' %}
+```bash
+pixi run test
+```
+{% endif %}
+
+## Project structure
+
+- `src/{{ package_name }}/` — source code.
+- `tests/` — tests.
+- `docs/` — documentation.
+
+## License
+
+This project is licensed under the {{ license }} license.

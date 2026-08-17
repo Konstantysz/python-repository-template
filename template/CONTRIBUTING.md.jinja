@@ -1,0 +1,81 @@
+# Contributing
+
+Thanks for your interest in contributing.
+
+## Development setup
+
+{% if package_manager == 'uv' %}
+1. Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+2. Run `uv sync --locked`
+3. Run `pre-commit install`
+{% elif package_manager == 'python-env' %}
+1. Create a virtual environment: `python -m venv .venv`
+2. Activate it: `source .venv/bin/activate`
+3. Install dependencies: `pip install -r requirements-dev.txt`
+4. Run `pre-commit install`
+{% elif package_manager == 'pixi' %}
+1. Install pixi: `curl -fsSL https://pixi.sh/install.sh | bash`
+2. Run `pixi install`
+3. Run `pre-commit install`
+{% endif %}
+
+## Code style
+
+- Python {{ python_version }} or later.
+- Formatting with `ruff format`.
+- Linting with `ruff check`.
+- Type checking with `mypy`.
+
+## Tests
+
+Write tests for new features. Run:
+
+{% if package_manager == 'uv' %}
+`uv run pytest -q`
+{% elif package_manager == 'python-env' %}
+`.venv/bin/pytest -q`
+{% elif package_manager == 'pixi' %}
+`pixi run test`
+{% endif %}
+
+## Commit messages
+
+{% if commit_convention == 'sentence-case' %}
+Write commit messages as short sentences in the imperative mood. Start with a capital letter and do not end with a period.
+
+Examples:
+
+- `Add user authentication`
+- `Fix login bug`
+- `Update dependencies`
+
+Keep the message concise and focused on one change.
+{% elif commit_convention == 'conventional-commits' %}
+This project follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). A commit message should look like:
+
+```
+feat: add user authentication
+
+Body explaining what and why.
+```
+
+Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`, `build`.
+{% elif commit_convention == 'gitmoji' %}
+This project uses [Gitmoji](https://gitmoji.dev/) to prefix commit messages with an emoji that describes the change. Examples:
+
+- `✨ feat: add new endpoint`
+- `🐛 fix: resolve login bug`
+- `📝 docs: update README`
+
+Pick the emoji that matches the commit's purpose.
+{% else %}
+There is no strict commit message format. Write clear, descriptive messages in the imperative mood: "Fix bug", not "Fixed bug".
+{% endif %}
+
+Keep commits small and focused. Link to related issues when applicable.
+
+## Pull requests
+
+- Keep changes small and focused.
+- Link related issues.
+- Make sure CI passes.

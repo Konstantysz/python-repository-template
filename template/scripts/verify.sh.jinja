@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run all checks: formatting, linting, type checking, tests.
+
+{% if package_manager == 'uv' %}
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy src
+uv run pytest -q
+{% elif package_manager == 'python-env' %}
+source .venv/bin/activate
+ruff format --check .
+ruff check .
+mypy src
+pytest -q
+{% elif package_manager == 'pixi' %}
+pixi run format-check
+pixi run lint
+pixi run typecheck
+pixi run test
+{% endif %}
+
+echo "All checks passed."

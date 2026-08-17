@@ -1,0 +1,202 @@
+_min_copier_version: "9.0"
+
+repo_name:
+  type: str
+  help: Repository name (e.g., my-package)
+
+package_name:
+  type: str
+  default: "{{ repo_name | lower | replace('-', '_') }}"
+  help: Python package name in snake_case
+
+project_description:
+  type: str
+  default: ""
+  help: Short description of the project
+
+author_name:
+  type: str
+  default: ""
+  help: Your name or organization
+
+author_email:
+  type: str
+  default: ""
+  help: Contact email
+
+python_version:
+  type: choice
+  choices:
+    - "3.12"
+    - "3.13"
+    - "3.14"
+  default: "3.12"
+  help: Python version
+
+package_manager:
+  type: choice
+  choices:
+    - uv
+    - python-env
+    - pixi
+  default: uv
+  help: Package manager to use
+
+license:
+  type: choice
+  choices:
+    - MIT
+    - Apache-2.0
+    - GPL-3.0
+    - proprietary
+  default: MIT
+  help: License for the project
+
+use_cli:
+  type: bool
+  default: true
+  help: Add a CLI with Typer and Rich?
+
+use_web:
+  type: bool
+  default: false
+  help: Add a web framework?
+
+web_framework:
+  type: choice
+  choices:
+    - FastAPI
+    - Flask
+    - Django
+  default: FastAPI
+  help: Web framework
+  when: "{{ use_web }}"
+
+use_database:
+  type: bool
+  default: false
+  help: Add database support?
+
+database:
+  type: choice
+  choices:
+    - SQLAlchemy (async)
+    - SQLModel
+    - Tortoise ORM
+  default: SQLAlchemy (async)
+  help: Database library
+  when: "{{ use_database }}"
+
+use_docker:
+  type: bool
+  default: true
+  help: Add Dockerfile and .dockerignore?
+
+use_ci:
+  type: bool
+  default: true
+  help: Add GitHub Actions CI?
+
+use_docs:
+  type: bool
+  default: true
+  help: Add documentation with MkDocs?
+
+use_pre_commit:
+  type: bool
+  default: true
+  help: Add pre-commit hooks?
+
+use_ai_agents:
+  type: bool
+  default: true
+  help: Add instruction files for AI agents?
+
+ai_agents:
+  type: multiple
+  choices:
+    - github-copilot
+    - claude-code
+    - cursor
+    - gemini
+    - codex
+    - cline
+  default:
+    - github-copilot
+    - claude-code
+    - cursor
+  help: Which AI agents should the repository support? (select all that apply)
+  when: "{{ use_ai_agents }}"
+
+include_changelog:
+  type: bool
+  default: true
+  help: Add CHANGELOG.md?
+
+include_security:
+  type: bool
+  default: true
+  help: Add SECURITY.md?
+
+include_contributing:
+  type: bool
+  default: true
+  help: Add CONTRIBUTING.md?
+
+include_scripts:
+  type: bool
+  default: true
+  help: Add helper scripts under scripts/?
+
+commit_convention:
+  type: choice
+  choices:
+    - sentence-case
+    - conventional-commits
+    - gitmoji
+    - none
+  default: sentence-case
+  help: Commit message convention to use
+
+current_year:
+  type: str
+  default: "{% now 'utc', '%Y' %}"
+  when: false
+
+current_date:
+  type: str
+  default: "{% now 'utc', '%Y-%m-%d' %}"
+  when: false
+
+_exclude:
+  # Package manager specific files
+  - "{% if package_manager != 'python-env' %}requirements.txt{% endif %}"
+  - "{% if package_manager != 'python-env' %}requirements-dev.txt{% endif %}"
+  - "{% if package_manager != 'uv' %}.python-version{% endif %}"
+  - "{% if package_manager != 'uv' %}uv.lock{% endif %}"
+  - "{% if package_manager != 'pixi' %}pixi.toml{% endif %}"
+  - "{% if package_manager != 'pixi' %}pixi.lock{% endif %}"
+
+  # Optional components
+  - "{% if not use_cli %}src/{{ package_name }}/cli.py{% endif %}"
+  - "{% if not use_docker %}.dockerignore{% endif %}"
+  - "{% if not use_docker %}Dockerfile{% endif %}"
+  - "{% if not use_docs %}mkdocs.yml{% endif %}"
+  - "{% if not use_ci %}.github/workflows/ci.yml{% endif %}"
+  - "{% if not use_docs %}docs{% endif %}"
+
+  # Community files
+  - "{% if not include_changelog %}CHANGELOG.md{% endif %}"
+  - "{% if not include_security %}SECURITY.md{% endif %}"
+  - "{% if not include_contributing %}CONTRIBUTING.md{% endif %}"
+
+  # Scripts
+  - "{% if not include_scripts %}scripts{% endif %}"
+
+  # AI agents
+  - "{% if not use_ai_agents %}CLAUDE.md{% endif %}"
+  - "{% if not use_ai_agents %}GEMINI.md{% endif %}"
+  - "{% if not use_ai_agents or 'github-copilot' not in (ai_agents or []) %}.github/copilot-instructions.md{% endif %}"
+  - "{% if not use_ai_agents or 'cursor' not in (ai_agents or []) %}.cursor{% endif %}"
+  - "{% if not use_ai_agents or 'cline' not in (ai_agents or []) %}.clinerules{% endif %}"
+  - "{% if not use_ai_agents or 'codex' not in (ai_agents or []) %}.codex{% endif %}"

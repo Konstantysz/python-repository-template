@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{ package_name }}"
+version = "0.1.0"
+description = "{{ project_description }}"
+requires-python = ">={{ python_version }}"
+{% if author_name %}
+authors = [
+    { name = "{{ author_name }}", email = "{{ author_email }}" }
+]
+{% endif %}
+license = { text = "{{ license }}" }
+dependencies = [
+    "pydantic-settings>=2.0",
+    {% if use_cli %} "typer>=0.12", "rich>=13.0", {% endif %}
+    {% if use_web and web_framework == 'FastAPI' %} "fastapi>=0.115", "uvicorn[standard]>=0.30", {% endif %}
+    {% if use_web and web_framework == 'Flask' %} "flask>=3.0", {% endif %}
+    {% if use_web and web_framework == 'Django' %} "django>=5.0", {% endif %}
+    {% if use_database and database == 'SQLAlchemy (async)' %} "sqlalchemy[asyncio]>=2.0", "asyncpg>=0.29", {% endif %}
+    {% if use_database and database == 'SQLModel' %} "sqlmodel>=0.0.14", {% endif %}
+    {% if use_database and database == 'Tortoise ORM' %} "tortoise-orm>=0.20", {% endif %}
+]
+
+{% if use_cli %}
+[project.scripts]
+{{ package_name }} = "{{ package_name }}.cli:app"
+{% endif %}
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "pre-commit",
+]
+docs = [
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py{{ python_version | replace('.', '') }}"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "ASYNC", "RUF"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=src/{{ package_name }} --cov-report=term-missing"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.mypy]
+python_version = "{{ python_version }}"
+strict = true
+plugins = ["pydantic.mypy"]

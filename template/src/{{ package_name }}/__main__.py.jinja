@@ -1,0 +1,11 @@
+{% if use_cli %}
+from {{ package_name }}.cli import app
+
+if __name__ == "__main__":
+    app()
+{% else %}
+from {{ package_name }} import __version__
+
+if __name__ == "__main__":
+    print(f"{{ package_name }} {__version__}")
+{% endif %}

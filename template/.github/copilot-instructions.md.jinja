@@ -1,0 +1,40 @@
+# Copilot Instructions
+
+This file gives GitHub Copilot the context it needs to work in this repository.
+
+## Project
+
+{{ project_description }}
+
+## Commands
+
+{% if package_manager == 'uv' %}
+- Install: `uv sync`
+- Test: `uv run pytest -q`
+- Lint: `uv run ruff check .`
+- Format: `uv run ruff format .`
+- Type check: `uv run mypy src`
+{% elif package_manager == 'python-env' %}
+- Install: `python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt`
+- Test: `.venv/bin/pytest -q`
+- Lint: `.venv/bin/ruff check .`
+- Format: `.venv/bin/ruff format .`
+- Type check: `.venv/bin/mypy src`
+{% elif package_manager == 'pixi' %}
+- Install: `pixi install`
+- Test: `pixi run test`
+- Lint: `pixi run lint`
+- Format: `pixi run format`
+- Type check: `pixi run typecheck`
+{% endif %}
+
+## Rules
+
+See `CLAUDE.md` for the full list of rules.
+{% if 'claude-code' not in (ai_agents or []) %}
+(CLAUDE.md is not generated for this project; the rules are included here.)
+- Public functions need type hints and docstrings.
+- Keep the `src/` layout.
+- Do not commit secrets.
+- Write tests for new features.
+{% endif %}

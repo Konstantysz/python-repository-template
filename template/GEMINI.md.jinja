@@ -1,0 +1,35 @@
+# Instructions for Gemini AI
+
+## Project
+
+{{ project_description }}
+
+## Commands
+
+{% if package_manager == 'uv' %}
+- Install: `uv sync --locked`
+- Tests: `uv run pytest -q`
+- Format: `uv run ruff format .`
+- Lint: `uv run ruff check .`
+- Type check: `uv run mypy src`
+{% elif package_manager == 'python-env' %}
+- Install: `python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt`
+- Tests: `.venv/bin/pytest -q`
+- Format: `.venv/bin/ruff format .`
+- Lint: `.venv/bin/ruff check .`
+- Type check: `.venv/bin/mypy src`
+{% elif package_manager == 'pixi' %}
+- Install: `pixi install`
+- Tests: `pixi run test`
+- Format: `pixi run format`
+- Lint: `pixi run lint`
+- Type check: `pixi run typecheck`
+{% endif %}
+
+## Rules
+
+- Read this file before making any changes.
+- Public functions need type hints and docstrings.
+- Keep `src/` layout.
+- Do not commit secrets.
+- Write tests for new features.

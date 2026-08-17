@@ -1,0 +1,45 @@
+[project]
+name = "{{ package_name }}"
+version = "0.1.0"
+description = "{{ project_description }}"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "win-64"]
+
+[dependencies]
+python = "{{ python_version }}.*"
+pydantic-settings = ">=2.0"
+{% if use_cli %}
+typer = ">=0.12"
+rich = ">=13.0"
+{% endif %}
+{% if use_web and web_framework == 'FastAPI' %}
+fastapi = ">=0.115"
+uvicorn = ">=0.30"
+{% elif use_web and web_framework == 'Flask' %}
+flask = ">=3.0"
+{% elif use_web and web_framework == 'Django' %}
+django = ">=5.0"
+{% endif %}
+{% if use_database and database == 'SQLAlchemy (async)' %}
+sqlalchemy = ">=2.0"
+asyncpg = ">=0.29"
+{% elif use_database and database == 'SQLModel' %}
+sqlmodel = ">=0.0.14"
+{% elif use_database and database == 'Tortoise ORM' %}
+tortoise-orm = ">=0.20"
+{% endif %}
+
+[feature.dev.pypi-dependencies]
+ruff = ">=0.9"
+mypy = ">=1.14"
+pytest = ">=8.3"
+pytest-cov = ">=6.0"
+pytest-xdist = ">=3.6"
+pre-commit = ">=4.0"
+
+[tasks]
+test = "pytest -q"
+lint = "ruff check ."
+format = "ruff format . && ruff check --fix ."
+format-check = "ruff format --check ."
+typecheck = "mypy src"

@@ -1,0 +1,51 @@
+.PHONY: install test lint format typecheck
+
+{% if package_manager == 'uv' %}
+install:
+	uv sync --locked
+
+test:
+	uv run pytest -q
+
+lint:
+	uv run pre-commit run --all-files
+
+format:
+	uv run ruff format .
+	uv run ruff check --fix .
+
+typecheck:
+	uv run mypy src
+{% elif package_manager == 'python-env' %}
+install:
+	python -m venv .venv
+	.venv/bin/pip install -r requirements-dev.txt
+
+test:
+	.venv/bin/pytest -q
+
+lint:
+	.venv/bin/pre-commit run --all-files
+
+format:
+	.venv/bin/ruff format .
+	.venv/bin/ruff check --fix .
+
+typecheck:
+	.venv/bin/mypy src
+{% elif package_manager == 'pixi' %}
+install:
+	pixi install
+
+test:
+	pixi run test
+
+lint:
+	pixi run lint
+
+format:
+	pixi run format
+
+typecheck:
+	pixi run typecheck
+{% endif %}
