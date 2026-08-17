@@ -1,5 +1,10 @@
 _min_copier_version: "9.0"
 
+_subdirectory: "template"
+
+_exclude:
+  - ".git"
+
 repo_name:
   type: str
   help: Repository name (e.g., my-package)
