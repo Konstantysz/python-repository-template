@@ -38,6 +38,6 @@ jobs:
         env:
           SKIP_POST_HOOK: "1"
         run: |
-          copier copy . /tmp/test-project --defaults --data '{"repo_name":"test-package"}'
+          copier copy . /tmp/test-project --defaults --data repo_name=test-package
           test -f /tmp/test-project/pyproject.toml
           test -d /tmp/test-project/src

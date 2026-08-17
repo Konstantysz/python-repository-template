@@ -12,7 +12,7 @@ def test_copier_copy_defaults(tmp_path):
             str(tmp_path / "output"),
             "--defaults",
             "--data",
-            '{"repo_name":"test-package"}',
+            "repo_name=test-package",
         ],
         env={**os.environ, "SKIP_POST_HOOK": "1"},
         capture_output=True,
