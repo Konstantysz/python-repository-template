@@ -2,7 +2,6 @@ import os
 import subprocess
 from pathlib import Path
 
-
 def test_copier_copy_defaults(tmp_path):
     result = subprocess.run(
         [
@@ -11,6 +10,8 @@ def test_copier_copy_defaults(tmp_path):
             Path(__file__).parent.parent,
             str(tmp_path / "output"),
             "--defaults",
+            "--data",
+            '{"repo_name":"test-package"}',
         ],
         env={**os.environ, "SKIP_POST_HOOK": "1"},
         capture_output=True,
