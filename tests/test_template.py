@@ -2,6 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 
+
 def test_copier_copy_defaults(tmp_path):
     result = subprocess.run(
         [
